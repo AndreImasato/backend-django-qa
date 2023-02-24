@@ -16,4 +16,9 @@ Linting will be executed by using ```pylint```. Run the following command on ter
 pylint --rcfile=.pylintrc --django-settings-module=core.settings */ 
 ```
 
+Or alternativally, execute the following.
+```bash
+make lint
+```
+
 ## API
