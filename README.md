@@ -11,4 +11,9 @@ As for the API, its structure will be created with the help of Django Rest Frame
 
 ## Static Analysis
 
+Linting will be executed by using ```pylint```. Run the following command on terminal.
+```bash
+pylint --rcfile=.pylintrc --django-settings-module=core.settings */ 
+```
+
 ## API
