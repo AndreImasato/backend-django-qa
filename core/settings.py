@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'corsheaders',
     # Custom applications
     'users',
+    'common',
 ]
 
 MIDDLEWARE = [
