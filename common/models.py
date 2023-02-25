@@ -18,7 +18,6 @@ class CustomBaseModel(models.Model):
     """
     public_id = models.CharField(
         default=uuid.uuid4,
-        editable=False,
         unique=True,
         max_length=36
     )

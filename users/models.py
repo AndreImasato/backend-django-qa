@@ -13,7 +13,6 @@ class CustomUser(AbstractUser):
     username = models.CharField(_("username"), unique=True, max_length=50)
     public_id = models.CharField(
         default=uuid.uuid4,
-        editable=False,
         unique=True,
         max_length=36
     )

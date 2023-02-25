@@ -4,7 +4,7 @@ from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, tag
 
 from users.factories.users_factories import CustomUserFactory
 
@@ -86,6 +86,7 @@ class SuperUserCommandTests(TestCase):
         os.unsetenv('DJANGO_SUPERUSER_EMAIL')
         os.unsetenv('DJANGO_SUPERUSER_PASSWORD')
 
+    @tag('exclude_git_commit')
     def test_command_input(self):
         """
         Test method for the command execution

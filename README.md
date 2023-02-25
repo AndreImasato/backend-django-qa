@@ -16,6 +16,10 @@ make create-pre-commit
 This hook will run tests and linting before the commit.
 
 ## Testing
+For testing run the following command
+```bash
+make test
+```
 
 ## Static Analysis
 
