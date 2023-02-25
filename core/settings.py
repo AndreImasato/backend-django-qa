@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     # Custom applications
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -131,6 +132,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NumericPasswordValidator',
     },
 ]
+
+# Sets custom user model for authentication
+AUTH_USER_MODEL = "users.CustomUser"
 
 
 # Internationalization
