@@ -7,6 +7,14 @@ The creation of abstract models as a base model will also be addressed in this r
 
 As for the API, its structure will be created with the help of Django Rest Framework.
 
+## Creating pre-commit hook
+A git pre-commit hook can be created by running the following command on terminal
+```bash
+make create-pre-commit
+```
+
+This hook will run tests and linting before the commit.
+
 ## Testing
 
 ## Static Analysis
