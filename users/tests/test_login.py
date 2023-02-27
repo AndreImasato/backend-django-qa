@@ -78,4 +78,3 @@ class LoginTests(APITestCase):
             post_email_login_access_count.count(),
             initial_access_count + 1
         )
-        #TODO test with refresh_token_access

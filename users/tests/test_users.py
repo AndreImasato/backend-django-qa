@@ -1,10 +1,14 @@
 import os
+from copy import copy
 from io import StringIO
 from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase, tag
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 from users.factories.users_factories import CustomUserFactory
 
@@ -218,11 +222,70 @@ class UsersQueryByStatusTests(TestCase):
                 )
             )
         )
-        for status in users_status:
-            CustomUserFactory(is_active=status)
+        for stt in users_status:
+            CustomUserFactory(is_active=stt)
         # Query active users
         active_users = User.objects.query_active().all()
         self.assertEqual(len(active_users), users_active_length)
         # Query inactive users
         inactive_users = User.objects.query_inactive().all()
         self.assertEqual(len(inactive_users), users_inactive_length)
+
+
+class UsersEndpointTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user_admin = User.objects.create_superuser(
+            email="admin@test.com",
+            username="admin",
+            password="admin"
+        )
+        cls.base_data = {
+            "email": "user@test.com",
+            "password": "password",
+            "password_confirmation": "password",
+            "username": "user"
+        }
+        cls.base_url = reverse('users-list')
+
+    def setUp(self):
+        self.test_user = User.objects.create_user(
+            email="test_user@test.com",
+            username="test_user",
+            password="password"
+        )
+
+    def test_without_authentication(self):
+        response = self.client.post(
+            self.base_url,
+            data=self.base_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_create_user(self):
+        self.client.force_authenticate(user=self.user_admin)
+        response = self.client.post(
+            self.base_url,
+            data=self.base_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_wrong_password(self):
+        self.client.force_authenticate(user=self.user_admin)
+        test_data = copy(self.base_data)
+        test_data['password_confirmation'] = "wrongpassword"
+        response = self.client.post(
+            self.base_url,
+            data=test_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_user(self):
+        self.client.force_authenticate(user=self.user_admin)
+        #TODO
+        pass
+
+    def test_destroy_user(self):
+        self.client.force_authenticate(user=self.user_admin)
+        #TODO
+        pass
