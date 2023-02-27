@@ -47,12 +47,8 @@ class LoginView(TokenObtainPairView):
             raise e
 
 
-#TODO create user view
 class UserView(ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
-
-    #TODO override retrieve (by public_id)
-    #TODO override update (by public_id)
-    #TODO override destroy (by public_id)
+    lookup_field = 'public_id'

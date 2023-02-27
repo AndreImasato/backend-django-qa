@@ -68,21 +68,21 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password_confirmation']:
+    def create(self, validated_data):
+        if validated_data['password'] != validated_data[
+            'password_confirmation'
+        ]:
             raise serializers.ValidationError(
                 {'password': "Passwords must be equal"}
             )
-        return attrs
-
-    def save(self):
         user = User(
-            email=self.validated_data['email'],
-            username=self.validated_data['username'],
+            email=validated_data['email'],
+            username=validated_data['username'],
             #TODO other fields
         )
-        user.set_password(self.validated_data['password'])
+        user.set_password(validated_data['password'])
         user.save()
+        return user
 
     class Meta:
         model = User

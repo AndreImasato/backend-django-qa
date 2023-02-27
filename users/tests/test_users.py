@@ -254,6 +254,10 @@ class UsersEndpointTest(APITestCase):
             username="test_user",
             password="password"
         )
+        self.detail_url = reverse(
+            'users-detail',
+            kwargs={"public_id": self.test_user.public_id}
+        )
 
     def test_without_authentication(self):
         response = self.client.post(
@@ -280,12 +284,21 @@ class UsersEndpointTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_update_user(self):
+    def test_retrieve_user(self):
         self.client.force_authenticate(user=self.user_admin)
-        #TODO
-        pass
+        response = self.client.get(self.detail_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('email'), self.test_user.email)
+
+    def test_patch_user(self):
+        self.client.force_authenticate(user=self.user_admin)
+        response = self.client.patch(
+            self.detail_url,
+            data={'first_name': 'Test', 'last_name': 'User'}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_destroy_user(self):
         self.client.force_authenticate(user=self.user_admin)
-        #TODO
-        pass
+        response = self.client.delete(self.detail_url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
