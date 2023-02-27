@@ -1,15 +1,16 @@
 from django.contrib.auth import get_user_model
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated
 
 from common.utils import Utils
 
 from .models import AccessTypes
 from .serializers import (LoginSerializer, UserAccessLogsSerializer,
                           UserSerializer)
-
 
 User = get_user_model()
 
@@ -40,14 +41,17 @@ class LoginView(TokenObtainPairView):
                 )
                 if access_log_data.is_valid():
                     access_log_data.save()
-                #TODO else return bad request
+                else:
+                    return Response(
+                        access_log_data.errors,
+                        status.HTTP_400_BAD_REQUEST
+                    )
             return response
         except InvalidToken as e:
-            #TODO return response
             raise e
 
 
-class UserView(ModelViewSet):
+class UserView(ModelViewSet):   # pylint: disable=R0901
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
