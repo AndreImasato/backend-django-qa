@@ -61,3 +61,41 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class AccessTypes(models.TextChoices):
+    """
+    Access type options abstraction
+    """
+    EMAIL_PASSWORD = 'email_psw', _('Email and Password')
+    ACCESS_TOKEN = 'access_token', _('Access token')
+
+
+class UserAccessLogs(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="access_logs",
+        related_query_name="access_logs"
+    )
+    access_type = models.CharField(
+        max_length=50,
+        choices=AccessTypes.choices,
+        blank=False,
+        null=False
+    )
+    access_timestamp = models.DateTimeField(
+        auto_now_add=True
+    )
+    user_agent = models.CharField(
+        max_length=255,
+        null=True
+    )
+    platform = models.CharField(
+        max_length=100,
+        null=True
+    )
+    ip_address = models.CharField(
+        max_length=50,
+        null=True
+    )
