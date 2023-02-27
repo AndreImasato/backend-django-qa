@@ -1,10 +1,10 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from common.utils import Utils
 
-from .models import AccessTypes, UserAccessLogs
+from .models import AccessTypes
 from .serializers import LoginSerializer, UserAccessLogsSerializer
 
 
@@ -19,13 +19,11 @@ class LoginView(TokenObtainPairView):
                 user_agent, platform, ip_address = Utils.get_request_info(
                     request
                 )
-                user = authenticate(
-                    request,
-                    email=request.data.get('email'),
-                    password=request.data.get('password')
-                )
+                User = get_user_model()
+                user = User.objects.filter(email=request.data.get('email'))\
+                    .first()
                 user_access_log_data = {
-                    "user": user,
+                    "user": user.id,
                     "access_type": AccessTypes.EMAIL_PASSWORD,
                     "user_agent": user_agent,
                     "platform": platform,
@@ -35,9 +33,7 @@ class LoginView(TokenObtainPairView):
                 access_log_data = UserAccessLogsSerializer(
                     data=user_access_log_data
                 )
-                #TODO checks why is not valid
                 if access_log_data.is_valid():
-                    print("CRIANDOOOO")
                     access_log_data.save()
             return response
         except InvalidToken as e:

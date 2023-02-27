@@ -1,3 +1,4 @@
+# pylint: disable=W0223
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
@@ -43,10 +44,4 @@ class LoginSerializer(serializers.Serializer):
 class UserAccessLogsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAccessLogs
-        fields = (
-            "user",
-            "access_type",
-            "user_agent",
-            "platform",
-            "ip_address"
-        )
+        exclude = ("access_timestamp",)

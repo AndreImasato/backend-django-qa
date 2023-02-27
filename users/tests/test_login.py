@@ -68,15 +68,14 @@ class LoginTests(APITestCase):
             "email": self.test_user.email,
             "password": self.password
         }
-        print(initial_access_count)
         self.client.post(
             url,
             data,
             format="json"
         )
-        post_email_login_access_count = UserAccessLogs.objects.all().count()
+        post_email_login_access_count = UserAccessLogs.objects.all()
         self.assertEqual(
-            post_email_login_access_count,
+            post_email_login_access_count.count(),
             initial_access_count + 1
         )
         #TODO test with refresh_token_access
