@@ -55,4 +55,5 @@ class UserView(ModelViewSet):   # pylint: disable=R0901
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
+    # Changes default lookup field for details endpoints
     lookup_field = 'public_id'

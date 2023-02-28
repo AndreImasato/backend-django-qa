@@ -233,6 +233,9 @@ class UsersQueryByStatusTests(TestCase):
 
 
 class UsersEndpointTest(APITestCase):
+    """
+    TestCase for testing users related endpoints
+    """
     @classmethod
     def setUpTestData(cls):
         cls.user_admin = User.objects.create_superuser(
@@ -260,6 +263,10 @@ class UsersEndpointTest(APITestCase):
         )
 
     def test_without_authentication(self):
+        """
+        Test without authenticate
+        Checks for 401 return
+        """
         response = self.client.post(
             self.base_url,
             data=self.base_data
@@ -267,6 +274,9 @@ class UsersEndpointTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_user(self):
+        """
+        Test for user creation endpoint
+        """
         self.client.force_authenticate(user=self.user_admin)
         response = self.client.post(
             self.base_url,
@@ -275,6 +285,10 @@ class UsersEndpointTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_wrong_password(self):
+        """
+        Test user creation without matching
+        password confirmation
+        """
         self.client.force_authenticate(user=self.user_admin)
         test_data = copy(self.base_data)
         test_data['password_confirmation'] = "wrongpassword"
@@ -285,12 +299,18 @@ class UsersEndpointTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_retrieve_user(self):
+        """
+        Test to retrieve a user
+        """
         self.client.force_authenticate(user=self.user_admin)
         response = self.client.get(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('email'), self.test_user.email)
 
     def test_patch_user(self):
+        """
+        Test for patching user information
+        """
         self.client.force_authenticate(user=self.user_admin)
         response = self.client.patch(
             self.detail_url,
@@ -298,7 +318,25 @@ class UsersEndpointTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_put_user(self):
+        """
+        Test for updating user information
+        """
+        self.client.force_authenticate(user=self.user_admin)
+        response = self.client.put(
+            self.detail_url,
+            data={'address': 'St. Test'}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictContainsSubset(
+            response.data,
+            {'address': 'St. Test'}
+        )
+
     def test_destroy_user(self):
+        """
+        Test for deleting a user
+        """
         self.client.force_authenticate(user=self.user_admin)
         response = self.client.delete(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
