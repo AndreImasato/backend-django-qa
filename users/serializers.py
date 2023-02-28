@@ -56,10 +56,15 @@ class UserAccessLogsSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    public_id = serializers.CharField(
+        read_only=True
+    )
     access_logs = UserAccessLogsSerializer(
         many=True,
         read_only=True
     )
+    #TODO only required for creation
+    #TODO for updating cannot appear
     password = serializers.CharField(
         required=True,
         write_only=True
@@ -70,13 +75,19 @@ class UserSerializer(serializers.ModelSerializer):
     )
 
     def create(self, validated_data):
+        # Validates whether matching passwords
+        # were given or not
         if validated_data['password'] != validated_data[
             'password_confirmation'
         ]:
+            # Raises a validation error
             raise serializers.ValidationError(
                 {'password': "Passwords must be equal"}
             )
+        # Makes a copy for the validated
+        # data payload
         user_data = copy(validated_data)
+        # Removes passwords keys
         user_data.pop('password')
         user_data.pop('password_confirmation')
         user = User(**user_data)
@@ -94,3 +105,7 @@ class UserSerializer(serializers.ModelSerializer):
             "user_permissions",
             "is_active"
         )
+        extra_kwargs = {
+            "last_login": {"read_only": True},
+            "date_joined": {"read_only": True},
+        }
