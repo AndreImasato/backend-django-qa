@@ -1,11 +1,12 @@
 # pylint: disable=W0223
+from copy import copy
+
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import UserAccessLogs
-
 
 User = get_user_model()
 
@@ -75,15 +76,21 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'password': "Passwords must be equal"}
             )
-        user = User(
-            email=validated_data['email'],
-            username=validated_data['username'],
-            #TODO other fields
-        )
+        user_data = copy(validated_data)
+        user_data.pop('password')
+        user_data.pop('password_confirmation')
+        user = User(**user_data)
         user.set_password(validated_data['password'])
         user.save()
         return user
 
     class Meta:
         model = User
-        exclude = ("id", "is_superuser", "is_staff")
+        exclude = (
+            "id",
+            "is_superuser",
+            "is_staff",
+            "groups",
+            "user_permissions",
+            "is_active"
+        )
