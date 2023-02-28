@@ -1,23 +1,12 @@
-from django.urls import path
-#? from rest_framework import renderers
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
 from .views import LoginView, UserView
 
-
-user_list = UserView.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-
-user_detail = UserView.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy'
-})
+router = DefaultRouter()
+router.register(r'', UserView, 'users')
 
 urlpatterns = [
     path('login/', LoginView.as_view(), name="user_login"),
-    path(route='users/', view=user_list, name='users-list'),
-    path(route='users/<public_id>/', view=user_detail, name='users-detail'),
+    path('users/', include(router.urls))
 ]
