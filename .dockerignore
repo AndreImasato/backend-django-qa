@@ -20,11 +20,15 @@ venv
 .dockerignore
 
 README.md
+LICENSE
 
 *.json
 
-#docker/*
 
 static/
 staticfiles/
 media/
+
+build-containers.sh
+down-containers.sh
+up-containers.sh

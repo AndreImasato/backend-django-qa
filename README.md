@@ -34,3 +34,29 @@ make lint
 ```
 
 ## API
+
+## Docker
+
+### Building images
+To build docker images, run the following command
+```bash
+make build
+```
+
+### Running Containers
+To bring the containers up, run the following command
+```bash
+make up-containers
+```
+
+### Running tests
+With the containers running up, execute the following command
+```bash
+docker exec -it web python manage.py test
+```
+
+### Shutting Containers Down
+To shut the containers down, run the following command
+```bash
+make down-containers
+```
