@@ -63,8 +63,6 @@ class UserSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True
     )
-    #TODO only required for creation
-    #TODO for updating cannot appear
     password = serializers.CharField(
         required=True,
         write_only=True

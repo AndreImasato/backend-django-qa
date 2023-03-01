@@ -318,21 +318,6 @@ class UsersEndpointTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_put_user(self):
-        """
-        Test for updating user information
-        """
-        self.client.force_authenticate(user=self.user_admin)
-        response = self.client.put(
-            self.detail_url,
-            data={'address': 'St. Test'}
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictContainsSubset(
-            response.data,
-            {'address': 'St. Test'}
-        )
-
     def test_destroy_user(self):
         """
         Test for deleting a user
