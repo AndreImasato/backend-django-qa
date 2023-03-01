@@ -23,9 +23,11 @@ env = environ.Env()
 # Defines whether it will read a .env file
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'local')
 if ENVIRONMENT == 'local':
-    env_path = os.path.join(BASE_DIR, 'envs', 'local', '.env')
+    env_path = os.path.join(BASE_DIR, 'envs', 'local', '.env')    
 # Defines more handlers (i.e.: "production", "staging", "development",
 # "docker", etc)
+elif ENVIRONMENT == 'docker':
+    env_path = os.path.join(BASE_DIR, 'envs', 'docker', '.env')
 else:
     env_path = None
 
@@ -78,6 +80,11 @@ MIDDLEWARE = [
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
 ]
+
+# SuperUser
+DJANGO_SUPERUSER_USERNAME = env.str('DJANGO_SUPERUSER_USERNAME', None)
+DJANGO_SUPERUSER_PASSWORD = env.str('DJANGO_SUPERUSER_PASSWORD', None)
+DJANGO_SUPERUSER_EMAIL = env.str('DJANGO_SUPERUSER_EMAIL', None)
 
 ROOT_URLCONF = 'core.urls'
 
