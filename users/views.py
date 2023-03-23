@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -85,3 +86,32 @@ class UserView(ModelViewSet):   # pylint: disable=R0901
     permission_classes = [IsAuthenticated]
     # Changes default lookup field for details endpoints
     lookup_field = 'public_id'
+
+    @action(
+        detail=True,
+        methods=['delete'],
+        url_path=r'delete-user',
+        permission_classes=[IsAdminUser]
+    )
+    def delete_user(self, request, public_id=None):  # pylint: disable=W0613
+        user = self.get_object()
+        user.deactivate()
+        return Response(
+            {"user": user.public_id},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+    @action(
+        detail=True,
+        methods=['patch'],
+        url_path=r'reactivate-user',
+        permission_classes=[IsAdminUser]
+    )
+    def reactivate_user(
+        self, request, public_id=None
+    ):  # pylint: disable=W0613
+        user = self.get_object()
+        user.activate()
+        return Response(
+            {"user": user.public_id}
+        )
