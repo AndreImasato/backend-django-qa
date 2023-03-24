@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from drf_spectacular.utils import extend_schema
 
 from common.utils import Utils
 
@@ -89,6 +89,26 @@ class LoginWithTokenView(APIView):
         )
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description="Lists all users"
+    ),
+    create=extend_schema(
+        description="Creates new user"
+    ),
+    retrieve=extend_schema(
+        description="Fetches user details"
+    ),
+    partial_update=extend_schema(
+        description="Updates user details"
+    ),
+    delete_user=extend_schema(
+        description='"Deletes" user (deactivates him/her)'
+    ),
+    reactivate_user=extend_schema(
+        description='Reactivates user'
+    )
+)
 class UserView(ModelViewSet):   # pylint: disable=R0901
     serializer_class = UserSerializer
     queryset = User.objects.all()
