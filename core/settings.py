@@ -12,7 +12,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+
 import environ
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -60,6 +62,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'rest_framework_simplejwt',
     'corsheaders',
+    'drf_spectacular',
     # Custom applications
     'users',
     'common',
@@ -185,8 +188,14 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+if not DEBUG:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = (
+        'rest_framework.renderers.JSONRenderer',
+    )
 
 # SIMPLE JWT
 SIMPLE_JWT = {
@@ -216,4 +225,12 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
     'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+}
+
+# SPECTACULAR DRF
+SPECTACULAR_SETTINGS = {
+    'TITLE': _('Django REST API'),
+    'DESCRIPTION': _('Documentation for Django REST API endpoints'),
+    'VERSION': '0.1.0',
+    'SCHEMA_PATH_PREFIX': r'/api/v[0-9]',
 }
