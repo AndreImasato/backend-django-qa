@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from drf_spectacular.utils import extend_schema
 
 from common.utils import Utils
 
@@ -19,8 +20,12 @@ User = get_user_model()
 
 # Create your views here.
 class LoginView(TokenObtainPairView):
+    __doc__ = "View containing login with email and password option"
     serializer_class = LoginSerializer
 
+    @extend_schema(
+        summary="Endpoint to get JWT pair token (access and refresh tokens)"
+    )
     def post(self, request, *args, **kwargs):
         try:
             response = super().post(request, *args, **kwargs)
@@ -54,8 +59,12 @@ class LoginView(TokenObtainPairView):
 
 
 class LoginWithTokenView(APIView):
+    __doc__ = 'View containing login with token option'
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        summary="Endpoint to login with JWT access token"
+    )
     def post(self, request):
         user_agent, platform, ip_address = Utils.get_request_info(
             request
