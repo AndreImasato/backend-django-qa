@@ -318,10 +318,60 @@ class UsersEndpointTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_destroy_user(self):
+    def test_delete_user(self):
         """
         Test for deleting a user
         """
         self.client.force_authenticate(user=self.user_admin)
         response = self.client.delete(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_user_action(self):
+        """
+        Test for deleting user action
+        """
+        self.client.force_authenticate(user=self.test_user)
+        url = reverse(
+            'users-delete-user',
+            kwargs={'public_id': self.test_user.public_id}
+        )
+        response = self.client.delete(url)
+        self.assertEqual(
+            status.HTTP_403_FORBIDDEN,
+            response.status_code
+        )
+        self.client.force_authenticate(user=self.user_admin)
+        response = self.client.delete(url)
+        self.assertEqual(
+            status.HTTP_204_NO_CONTENT,
+            response.status_code
+        )
+        self.assertEqual(
+            str(self.test_user.public_id),
+            response.data['user']
+        )
+
+    def test_reactivate_user_action(self):
+        """
+        Test for reactivating user action
+        """
+        self.client.force_authenticate(user=self.test_user)
+        url = reverse(
+            'users-reactivate-user',
+            kwargs={'public_id': self.test_user.public_id}
+        )
+        response = self.client.patch(url)
+        self.assertEqual(
+            status.HTTP_403_FORBIDDEN,
+            response.status_code
+        )
+        self.client.force_authenticate(user=self.user_admin)
+        response = self.client.patch(url)
+        self.assertEqual(
+            status.HTTP_200_OK,
+            response.status_code
+        )
+        self.assertEqual(
+            str(self.test_user.public_id),
+            response.data['user']
+        )
