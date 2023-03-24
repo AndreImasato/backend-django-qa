@@ -95,7 +95,6 @@ class UserAccessLogs(models.Model):
         max_length=100,
         null=True
     )
-    ip_address = models.CharField(
-        max_length=50,
-        null=True
+    ip_address = models.GenericIPAddressField(
+        null=True,
     )
